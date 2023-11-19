@@ -1,17 +1,18 @@
-#te = 악당 거북이
-#point = 
-
 import turtle as t
 import random
+from threading import Timer
+from time import time
 
-te = t.Turtle() # 악당 거북이(빨간색))
+
+
+te = t.Turtle()  # 악당 거북이(빨간색))
 te.shape("turtle")
 te.color("red")
 te.speed(0)
 te.up()
 te.goto(0, 200)
 
-point = t.Turtle() # 먹이(초록색 동그라미)
+point = t.Turtle()  # 먹이(초록색 동그라미)
 point.shape("circle")
 point.color("#FFFF96")
 point.speed(0)
@@ -23,7 +24,12 @@ game_over.hideturtle()
 game_over.speed(0)
 game_over.up()
 
-def game_over_message(m1, m2): 
+score_point = t.Turtle()
+score_point.hideturtle()
+score_point.speed(0)
+score_point.up()
+
+def game_over_message(m1, m2):
     score_point.clear()
     game_over.clear()
     game_over.color("white")
@@ -33,40 +39,77 @@ def game_over_message(m1, m2):
     game_over.write(m2, False, "center", ("", 20))
     t.home()
 
-score_point = t.Turtle()
-score_point.hideturtle()
-score_point.speed(0)
-score_point.up()
-
 def score_message(m1):
     game_over.clear()
     score_point.clear()
     score_point.write(m1, False, "center", ("", 20, "bold"))
     score_point.goto(0, 0)
 
-def turn_right(): # 오른쪽으로 방향 전환
+def turn_right():  # 오른쪽으로 방향 전환
     t.setheading(0)
-def turn_up(): # 위쪽으로 방향 전환
+
+def turn_up():  # 위쪽으로 방향 전환
     t.setheading(90)
-def turn_left(): # 왼쪽으로 방향 전환
+
+def turn_left():  # 왼쪽으로 방향 전환
     t.setheading(180)
-def turn_down(): # 아래쪽으로 방향 전환
+
+def turn_down():  # 아래쪽으로 방향 전환
     t.setheading(270)
 
-playing = False # 현재 게임이 플레이 중인지 확인하는 변수
+playing = False  # 현재 게임이 플레이 중인지 확인하는 변수
+score = 0  # 점수를 저장하는 변수
 
-def start(): # 게임을 시작하는 함수
+def start():  # 게임을 시작하는 함수
     global playing
 
-    if playing == False:
+    if not playing:
         playing = True
-        t.clear() # 화면에 메시지를 지운다
+        t.clear()  # 화면에 메시지를 지운다
         score_point.clear()
         score_point.goto(0, 0)
         score_message(f"Score : {score}")
         play()
 
-score = 0 # 점수를 저장하는 변수
+def add_enemy():
+    global enemy_list  # 전역 변수로 악당 거북이 리스트 사용
+
+    enemy = t.Turtle()  # 새로운 악당 거북이 생성
+    enemy.shape("turtle")
+    enemy.color("red")
+    enemy.speed(te.speed())  # 기존 거북이의 속도 설정
+    enemy.up()
+    start_x = random.randint(-230, 230)
+    start_y = random.randint(-230, 230)
+    enemy.goto(0, 0)
+    enemy_list.append(enemy)  # 새로운 악당 거북이 리스트에 추가
+    
+    Timer(10, remove_enemy, args=(enemy,)).start()  # 악당 거북이 삭제 타이머
+
+def remove_enemy(enemy):
+    enemy.hideturtle()  # 악당 거북이 숨기기
+    enemy_list.remove(enemy)  # 리스트에서 제거
+
+enemy_list = []  # 악당 거북이들을 담을 리스트 생성
+enemy_timers = []  # 악당 거북이 타이머를 담을 리스트 생성
+
+def move_enemies():
+    
+    for enemy in enemy_list:
+        enemy.setheading(enemy.towards(t.pos()))  # 플레이어를 향해 이동
+        enemy.forward(5)  # 악당 거북이 움직임
+
+        # 플레이어와 악당 거북이의 거리 확인
+        if t.distance(enemy) < 12:
+            text = "Score : " + str(score)
+            te.goto(0, 200)
+            te.setheading(-90)
+            point.goto(0, -200)
+            game_over_message("Game Over", text)
+            t.home()
+            t.color("#429F6B")
+            playing = False
+            score = 0
 
 def play():
     global score
@@ -95,16 +138,20 @@ def play():
         playing = False
         score = 0
 
-    if t.distance(point) < 12: # 먹이의 거리가 12보다 작으면
-        score = score + 1 # 점수를 올리고
-        score_message(f"Score : {score}") # 화면에 점수를 출력 합니다.
+    if t.distance(point) < 12:  # 먹이의 거리가 12보다 작으면
+        score += 1  # 점수를 올리고
+        score_message(f"Score : {score}")  # 화면에 점수를 출력합니다.
         start_x = random.randint(-230, 230)
         start_y = random.randint(-230, 230)
         point.goto(start_x, start_y)
-    
-    if playing: # 게임 플레이 중이면
-        t.ontimer(play, 100) # 0.1초 후 play 함수 실행
-    
+
+        if score % 1 == 0 and score != 0:  # score가 5의 배수이고 0이 아닐 때
+            add_enemy()  # 악당 거북이 추가
+
+    if playing:  # 게임 플레이 중이면
+        move_enemies()  # 악당 거북이 이동
+        t.ontimer(play, 100)  # 0.1초 후 play 함수 실행
+
 t.setup(500, 500)
 t.bgcolor("#A0A0FF")
 
