@@ -9,8 +9,7 @@ te.color("red")
 te.speed(0)
 te.up()
 te.goto(0, 200)
-
-
+te.setheading(-90)
 
 point = t.Turtle()  # 먹이(초록색 동그라미)
 point.shape("circle")
@@ -29,7 +28,52 @@ score_point.hideturtle()
 score_point.speed(0)
 score_point.up()
 
+def add_bed_te():
+    global eadd_te_list  # 전역 변수로 악당 거북이 리스트 사용
+    global add_te
+
+    add_te = t.Turtle()  # 새로운 악당 거북이 생성
+    add_te.shape("turtle")
+    add_te.color("orange")
+    add_te.speed(0) # 기존 거북이의 속도 설정
+    add_te.up()
+    start_x = random.randint(-230, 230)
+    start_y = random.randint(-230, 230)
+    add_te.goto(0, 0)
+    add_te_list.append(add_te)  # 새로운 악당 거북이 리스트에 추가
+    
+    Timer(10, remove_add_te, args=(add_te,)).start()  # 악당 거북이 삭제 타이머
+
+def remove_add_te(add_te):
+    add_te.hideturtle()  # 악당 거북이 숨기기
+    add_te.remove(add_te)  # 리스트에서 제거
+
+add_te_list = []  # 악당 거북이들을 담을 리스트 생성
+add_tetimers = []  # 악당 거북이 타이머를 담을 리스트 생성
+
+def move_enemies():
+    global score
+    global playing
+
+    for add_te in add_te_list:
+        add_te.setheading(add_te.towards(t.pos()))  # 플레이어를 향해 이동
+        add_te.forward(speed)  # 악당 거북이 움직임
+
+        # 플레이어와 악당 거북이의 거리 확인
+        if t.distance(add_te) < 12:
+            text = "Score : " + str(score)
+            te.goto(0, 200)
+            te.setheading(-90)
+            point.goto(0, -200)
+            game_over_message("Game Over", text)
+            t.goto(0, 0)
+            t.color("#429F6B")
+            playing = False
+            score = 0
 def game_over_message(m1, m2):
+    global add_te_list
+    global add_te
+
     score_point.clear()
     game_over.clear()
     game_over.color("white")
@@ -37,8 +81,13 @@ def game_over_message(m1, m2):
     game_over.write(m1, False, "center", ("", 20))
     game_over.goto(0, -100)
     game_over.write(m2, False, "center", ("", 20))
-    t.home()
+    t.goto(0, 0)
+    t.setheading(-90)
     te.goto(0, 200)
+
+    for add_te in add_te_list:
+        add_te.hideturtle()
+    add_te_list = []
     
 
 def score_message(m1):
@@ -73,47 +122,6 @@ def start():  # 게임을 시작하는 함수
         score_message(f"Score : {score}")
         play()
 
-def add_bed_te():
-    global eadd_te_list  # 전역 변수로 악당 거북이 리스트 사용
-    global add_te
-
-    add_te = t.Turtle()  # 새로운 악당 거북이 생성
-    add_te.shape("turtle")
-    add_te.color("orange")
-    add_te.speed(0) # 기존 거북이의 속도 설정
-    add_te.up()
-    start_x = random.randint(-230, 230)
-    start_y = random.randint(-230, 230)
-    add_te.goto(0, 0)
-    add_te_list.append(add_te)  # 새로운 악당 거북이 리스트에 추가
-    
-    Timer(10, remove_add_te, args=(add_te,)).start()  # 악당 거북이 삭제 타이머
-
-def remove_add_te(add_te):
-    add_te.hideturtle()  # 악당 거북이 숨기기
-    add_te.remove(add_te)  # 리스트에서 제거
-
-add_te_list = []  # 악당 거북이들을 담을 리스트 생성
-add_tetimers = []  # 악당 거북이 타이머를 담을 리스트 생성
-
-def move_enemies():
-    
-    for add_te in add_te_list:
-        add_te.setheading(add_te.towards(t.pos()))  # 플레이어를 향해 이동
-        add_te.forward(speed)  # 악당 거북이 움직임
-
-        # 플레이어와 악당 거북이의 거리 확인
-        if t.distance(add_te) < 12:
-            text = "Score : " + str(score)
-            te.goto(0, 200)
-            te.setheading(-90)
-            point.goto(0, -200)
-            game_over_message("Game Over", text)
-            
-            t.home()
-            t.color("#429F6B")
-            playing = False
-            score = 0
 
 def play():
     global score
@@ -138,7 +146,7 @@ def play():
         te.setheading(-90)
         point.goto(0, -200)
         game_over_message("Game Over", text)
-        t.home()
+        t.goto(0, 0)
         t.color("#429F6B")
         playing = False
         score = 0
