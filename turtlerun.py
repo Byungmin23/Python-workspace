@@ -28,31 +28,16 @@ score_point.hideturtle()
 score_point.speed(0)
 score_point.up()
 
-"""
-time_display = t.Turtle()
-time_display.hideturtle()
-time_display.speed(0)
-time_display.up()
-time_display.goto(-230, 200)
+popup = t.Turtle()
+popup.hideturtle()
+popup.speed(0)
+popup.up()
 
-max_time = 10 #
-current_time = max_time
-time_interval = 1
-
-def display_time():
-    global current_time
-
-    if playing:
-        time_display.clear()
-        time_display.write(f"Orange Turtle Time : {current_time}", align="left")
-        current_time -= time_interval
-
-        if current_time < 0:
-            current_time = max_time
-            time_display.clear()
-
-        time_display.getscreen().ontimer(display_time, 1000)
-"""
+def first_message():
+    popup.color("white")
+    popup.goto(0, 100)
+    popup.write("Press spcae", False, "center", ("", 20))
+    
 
 def add_bed_te():
     global eadd_te_list  # 전역 변수로 악당 거북이 리스트 사용
@@ -148,6 +133,7 @@ def start():  # 게임을 시작하는 함수
         score_point.clear()
         score_point.goto(0, 0)
         score_message(f"Score : {score}")
+        popup.clear()
         play()
 
 
@@ -157,7 +143,7 @@ def play():
     global speed
 
     t.forward(10)
-
+    
     if random.randint(1, 5) == 3:
         ang = te.towards(t.pos())
         te.setheading(ang)
@@ -196,7 +182,7 @@ def play():
 
 t.setup(500, 500)
 t.bgcolor("#A0A0FF")
-
+first_message()
 t.shape("turtle")
 t.speed(0)
 t.setheading(270)
