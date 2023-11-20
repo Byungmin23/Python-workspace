@@ -36,7 +36,9 @@ popup.up()
 def first_message():
     popup.color("white")
     popup.goto(0, 100)
-    popup.write("Press spcae", False, "center", ("", 20))
+    popup.write("Turtle Run Game", False, "center", ("", 20, "bold"))
+    popup.goto(0, 70)
+    popup.write("if you play turtle run game, pass spacr bar", False, "center", ("", 10, "bold"))
     
 
 def add_bed_te():
@@ -91,9 +93,9 @@ def game_over_message(m1, m2):
     game_over.clear()
     game_over.color("white")
     game_over.goto(0, 100)
-    game_over.write(m1, False, "center", ("", 20))
-    game_over.goto(0, -100)
-    game_over.write(m2, False, "center", ("", 20))
+    game_over.write(m1, False, "center", ("", 20, "bold"))
+    game_over.goto(0, 70)
+    game_over.write(m2, False, "center", ("", 20, "bold"))
     t.goto(0, 0)
     t.setheading(-90)
     te.goto(0, 200)
@@ -106,8 +108,9 @@ def game_over_message(m1, m2):
 def score_message(m1):
     game_over.clear()
     score_point.clear()
+    score_point.color("white")
     score_point.write(m1, False, "center", ("", 20, "bold"))
-    score_point.goto(0, 0)
+    score_point.goto(0, 210)
 
 def turn_right():  # 오른쪽으로 방향 전환
     t.setheading(0)
@@ -131,7 +134,7 @@ def start():  # 게임을 시작하는 함수
         playing = True
         t.clear()  # 화면에 메시지를 지운다
         score_point.clear()
-        score_point.goto(0, 0)
+        score_point.goto(0, 210)
         score_message(f"Score : {score}")
         popup.clear()
         play()
