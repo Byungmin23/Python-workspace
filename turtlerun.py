@@ -1,7 +1,7 @@
 import turtle as t
 import random
 from threading import Timer
-from time import time
+
 
 te = t.Turtle()  # 악당 거북이(빨간색))
 te.shape("turtle")
@@ -28,6 +28,32 @@ score_point.hideturtle()
 score_point.speed(0)
 score_point.up()
 
+"""
+time_display = t.Turtle()
+time_display.hideturtle()
+time_display.speed(0)
+time_display.up()
+time_display.goto(-230, 200)
+
+max_time = 10 #
+current_time = max_time
+time_interval = 1
+
+def display_time():
+    global current_time
+
+    if playing:
+        time_display.clear()
+        time_display.write(f"Orange Turtle Time : {current_time}", align="left")
+        current_time -= time_interval
+
+        if current_time < 0:
+            current_time = max_time
+            time_display.clear()
+
+        time_display.getscreen().ontimer(display_time, 1000)
+"""
+
 def add_bed_te():
     global eadd_te_list  # 전역 변수로 악당 거북이 리스트 사용
     global add_te
@@ -43,6 +69,7 @@ def add_bed_te():
     add_te_list.append(add_te)  # 새로운 악당 거북이 리스트에 추가
     
     Timer(10, remove_add_te, args=(add_te,)).start()  # 악당 거북이 삭제 타이머
+    #display_time()
 
 def remove_add_te(add_te):
     add_te.hideturtle()  # 악당 거북이 숨기기
@@ -70,6 +97,7 @@ def move_enemies():
             t.color("#429F6B")
             playing = False
             score = 0
+
 def game_over_message(m1, m2):
     global add_te_list
     global add_te
